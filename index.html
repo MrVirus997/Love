@@ -72,7 +72,7 @@
                 height: auto;
             }
             #loveText {
-                font-size: 2.5rem;
+                font-size: 80px;
             }
         }
     </style>
@@ -141,16 +141,16 @@
 
         if (type < 0.5) {
             // ❄️ Snow
-            particles.push({type:"snow", x, y, radius, speed:Math.random()*1.2+0.5, drift:(Math.random()-0.5)*0.5, color:"rgba(255,255,255,0.8)"});
+            particles.push({type:"snow", x, y, radius, speed:Math.random()*2.5+1.5, drift:(Math.random()-0.5)*0.5, color:"rgba(255,255,255,0.8)"});
         } else if (type < 0.7) {
             // 💖 Floating Hearts
-            particles.push({type:"heart", x, y, radius:Math.random()*8+6, speed:Math.random()*0.8+0.3, drift:(Math.random()-0.5)*0.4, color:"rgba(255,100,150,0.9)"});
+            particles.push({type:"heart", x, y, radius:Math.random()*8+6, speed:Math.random()*2+1, drift:(Math.random()-0.5)*0.4, color:"rgba(255,100,150,0.9)"});
         } else if (type < 0.9) {
             // ✨ Twinkling Star
-            particles.push({type:"star", x, y, radius:Math.random()*2+1, speed:Math.random()*1+0.5, drift:(Math.random()-0.5)*0.3, color:"rgba(255,255,200,0.8)", twinkle:Math.random()*100});
+            particles.push({type:"star", x, y, radius:Math.random()*2+1, speed:Math.random()*2+1.2, drift:(Math.random()-0.5)*0.3, color:"rgba(255,255,200,0.8)", twinkle:Math.random()*100});
         } else {
             // 🌌 Bokeh Circle
-            particles.push({type:"bokeh", x, y, radius:Math.random()*12+6, speed:Math.random()*0.4+0.2, drift:(Math.random()-0.5)*0.2, color:"rgba(255,200,255,0.2)"});
+            particles.push({type:"bokeh", x, y, radius:Math.random()*12+6, speed:Math.random()*1+0.6, drift:(Math.random()-0.5)*0.2, color:"rgba(255,200,255,0.2)"});
         }
     }
 
