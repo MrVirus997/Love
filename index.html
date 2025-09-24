@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LOVE</title>
+    <style>
+        body {
+            background: radial-gradient(circle at center, #0d001a, #000000);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        #effectCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #heartCanvas {
+            background: transparent;
+            z-index: 2;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ✨ Text styling */
+        #loveText {
+            position: absolute;
+            top: 8%;
+            text-align: center;
+            font-size: 3.2rem;
+            font-family: "Courier New", monospace;
+            color: #ff2a6d;
+            font-weight: bold;
+            text-shadow: 
+                0 0 8px #ff4da6,
+                0 0 16px #ff1a75,
+                0 0 28px #ff66b2;
+            z-index: 5;
+            animation: glow 2.5s ease-in-out infinite alternate;
+            line-height: 1.5em;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 8px #ff4da6, 0 0 16px #ff1a75;
+                transform: scale(1);
+            }
+            to {
+                text-shadow: 0 0 18px #ff66cc, 0 0 32px #ff1a75;
+                transform: scale(1.05);
+            }
+        }
+
+        /* 📱 Mobile */
+        @media (max-width: 1024px) {
+            #heartCanvas {
+                width: 95vw;
+                height: auto;
+            }
+            #loveText {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="effectCanvas"></canvas>
+    <div id="loveText">Made with ❤️<br>Just for Hajra</div>
+    <canvas id="heartCanvas" width="600" height="600"></canvas>
+    
+
+<script>
+    // ---------- Heart ----------
+    const heartCanvas = document.getElementById("heartCanvas");
+    const ctx = heartCanvas.getContext("2d");
+
+    function hearta(k) {
+        return 15 * Math.sin(k) ** 3;
+    }
+    function heartb(k) {
+        return 12 * Math.cos(k) - 5 * Math.cos(2 * k) - 2 * Math.cos(3 * k) - Math.cos(4 * k);
+    }
+
+    let i = 0;
+    function drawHeart() {
+        if (i < 6000) {
+            const x = hearta(i) * 20 + heartCanvas.width / 2;
+            const y = -heartb(i) * 20 + heartCanvas.height / 2;
+
+            const gradient = ctx.createRadialGradient(
+                heartCanvas.width / 2, heartCanvas.height / 2, 10,
+                heartCanvas.width / 2, heartCanvas.height / 2, 300
+            );
+            gradient.addColorStop(0, "rgba(255, 100, 150, 0.9)");
+            gradient.addColorStop(1, "rgba(255, 0, 60, 0.7)");
+
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(heartCanvas.width / 2, heartCanvas.height / 2);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            i++;
+            setTimeout(() => requestAnimationFrame(drawHeart), 20);
+        }
+    }
+    drawHeart();
+
+    // ---------- Effects (Snow + Hearts + Stars + Bokeh) ----------
+    const effectCanvas = document.getElementById("effectCanvas");
+    const ectx = effectCanvas.getContext("2d");
+
+    function resizeCanvas() {
+        effectCanvas.width = window.innerWidth;
+        effectCanvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+
+    let particles = [];
+
+    function createParticle() {
+        const type = Math.random();
+        const x = Math.random() * effectCanvas.width;
+        const y = -10;
+        const radius = Math.random() * 3 + 1;
+
+        if (type < 0.5) {
+            // ❄️ Snow
+            particles.push({type:"snow", x, y, radius, speed:Math.random()*1.2+0.5, drift:(Math.random()-0.5)*0.5, color:"rgba(255,255,255,0.8)"});
+        } else if (type < 0.7) {
+            // 💖 Floating Hearts
+            particles.push({type:"heart", x, y, radius:Math.random()*8+6, speed:Math.random()*0.8+0.3, drift:(Math.random()-0.5)*0.4, color:"rgba(255,100,150,0.9)"});
+        } else if (type < 0.9) {
+            // ✨ Twinkling Star
+            particles.push({type:"star", x, y, radius:Math.random()*2+1, speed:Math.random()*1+0.5, drift:(Math.random()-0.5)*0.3, color:"rgba(255,255,200,0.8)", twinkle:Math.random()*100});
+        } else {
+            // 🌌 Bokeh Circle
+            particles.push({type:"bokeh", x, y, radius:Math.random()*12+6, speed:Math.random()*0.4+0.2, drift:(Math.random()-0.5)*0.2, color:"rgba(255,200,255,0.2)"});
+        }
+    }
+
+    function drawParticles() {
+        ectx.clearRect(0, 0, effectCanvas.width, effectCanvas.height);
+        for (let p of particles) {
+            ectx.beginPath();
+            if (p.type === "heart") {
+                // 💖 Draw heart shape
+                ectx.fillStyle = p.color;
+                ectx.moveTo(p.x, p.y);
+                ectx.bezierCurveTo(p.x - p.radius, p.y - p.radius, p.x - p.radius*1.5, p.y + p.radius/2, p.x, p.y + p.radius);
+                ectx.bezierCurveTo(p.x + p.radius*1.5, p.y + p.radius/2, p.x + p.radius, p.y - p.radius, p.x, p.y);
+                ectx.fill();
+            } else if (p.type === "star") {
+                // ✨ Twinkling Star
+                const opacity = 0.5 + 0.5 * Math.sin((Date.now()/100 + p.twinkle));
+                ectx.fillStyle = `rgba(255,255,200,${opacity})`;
+                ectx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                ectx.fill();
+            } else {
+                // ❄️ Snow + 🌌 Bokeh
+                ectx.fillStyle = p.color;
+                ectx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                ectx.fill();
+            }
+        }
+        updateParticles();
+    }
+
+    function updateParticles() {
+        for (let p of particles) {
+            p.y += p.speed;
+            p.x += p.drift;
+            if (p.y - p.radius > effectCanvas.height || p.x < -50 || p.x > effectCanvas.width + 50) {
+                const index = particles.indexOf(p);
+                particles.splice(index, 1);
+            }
+        }
+    }
+
+    setInterval(createParticle, 100);
+    function animateParticles() {
+        drawParticles();
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    window.addEventListener("resize", () => resizeCanvas());
+</script>
+</body>
+</html>
